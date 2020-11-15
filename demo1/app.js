@@ -1,4 +1,4 @@
-let V = 4;
+let V = 5;
 
 /**
  *
@@ -15,18 +15,19 @@ const travellingSalesmanProblem = (graph, s) => {
   }
   // store minimum weight Hamiltonian Cycle.
   let min_path = Number.MAX_VALUE;
-
+  let current_pathWeight;
   do {
-    let current_pathweight = 0; //store current Path weight
+    current_pathWeight = 0; //store current Path weight
     let k = s; // compute current path weight
     for (let index = 0; index < vertex.length; index++) {
-      current_pathweight += graph[k][vertex[index]];
+      current_pathWeight += graph[k][vertex[index]];
       k = vertex[index];
     }
-    current_pathweight += graph[k][s];
+    current_pathWeight += graph[k][s];
 
     // update minimum
-    min_path = Math.min(min_path, current_pathweight);
+    min_path = Math.min(min_path, current_pathWeight);
+    console.log(`${s},${vertex},${s}`, current_pathWeight);
   } while (findNextPermutation(vertex));
 
   return min_path;
@@ -78,8 +79,7 @@ const findNextPermutation = (data) => {
   if (data.length <= 1) return false;
 
   let last = data.length - 2;
-  // find the longest non-increasing
-  // suffix and find the pivot
+  // find the longest non-increasing suffix and find the pivot
   while (last >= 0) {
     if (data[last] < data[last + 1]) break;
     last--;
@@ -112,18 +112,19 @@ const findNextPermutation = (data) => {
  */
 (function () {
   let s = 0;
+  // let graph = [
+  //   [0, 10, 15, 20],
+  //   [10, 0, 35, 25],
+  //   [15, 35, 0, 30],
+  //   [20, 25, 30, 0],
+  // ];
   let graph = [
-    [0, 10, 15, 20],
-    [10, 0, 35, 25],
-    [15, 35, 0, 30],
-    [20, 25, 30, 0],
+    [0, 40, 60, 20, 30],
+    [40, 0, 40, 45, 20],
+    [60, 40, 0, 50, 35],
+    [20, 45, 50, 0, 27],
+    [30, 20, 35, 27, 0],
   ];
-  //   let graph = [
-  //     [0, 40, 60, 20, 30],
-  //     [40, 0, 40, 45, 20],
-  //     [60, 40, 0, 50, 35],
-  //     [20, 45, 50, 0, 27],
-  //     [30, 20, 35, 27, 0],
-  //   ];
-  console.log(travellingSalesmanProblem(graph, s));
+  let minPath = travellingSalesmanProblem(graph, s);
+  console.log(minPath);
 })();
