@@ -67,10 +67,10 @@ const main = (firstId) => {
   }
 
   //Chay tu diem cuoi cung ve lai kho
-  const indexFirstOrder = indexRouteMap[0];
+  const firstIndexRoute = indexRouteMap[0];
   const lastIndexRoute = indexRouteMap[indexRouteMap.length - 1];
-  bestRouter += orders[lastIndexRoute].distances[indexFirstOrder];
-  indexRouteMap.push(indexFirstOrder);
+  bestRouter += orders[lastIndexRoute].distances[firstIndexRoute];
+  indexRouteMap.push(firstIndexRoute);
 
   indexRouteMap.forEach((e) => routeMap.push(orders[e].id));
 };
