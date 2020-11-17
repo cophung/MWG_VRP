@@ -65,9 +65,12 @@ const timkiem = (i, ROUTEMAP, S) => {
     }
     return accumulator;
   };
+
   let Min = KKO.reduce(reducer, Number.MAX_VALUE);
-  S.push(Min);
   let ID = KKO.indexOf(Min);
+
+  S.push(Min);
+
   return ID;
 };
 
@@ -79,6 +82,7 @@ while (i >= 0 && count < DB.length - 1) {
 
   if (count === DB.length - 1) {
     S.push(DB.map((x) => x[ID])[0]);
+    ROUTEMAP.push(0);
   }
 }
 
