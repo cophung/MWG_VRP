@@ -41,46 +41,46 @@ const DB = [
   },
 ];
 
+let ArrayID = DB.map((x) => x.id);
+let ROUTEMAP = [0];
+let i = 0;
+let count = 0;
+let S = [];
+
+/**
+ *
+ * @param {int} i Doi tuong tiep theo
+ * @param {Array} ROUTEMAP
+ * @param {Array} S Danh sach cac quang duong da di
+ */
 const timkiem = (i, ROUTEMAP, S) => {
-  //tim gia tri nho nhat//
   const KKO = DB.map((x) => x[i]);
   for (i = 0; i < ROUTEMAP.length; i++) {
     KKO[ROUTEMAP[i]] = 0;
   }
 
-  console.log("mang gia tri can so sanh", KKO);
   const reducer = (accumulator, currentValue) => {
     if (accumulator > currentValue && currentValue !== 0) {
       return currentValue;
     }
     return accumulator;
   };
-  let Min = KKO.reduce(reducer, 99);
-  console.log("Min", Min);
+  let Min = KKO.reduce(reducer, Number.MAX_VALUE);
   S.push(Min);
-  console.log("S+ooooo", S);
   let ID = KKO.indexOf(Min);
   return ID;
 };
 
-let ArrayID = DB.map((x) => x.id);
-let ROUTEMAP = [0];
-let i = 0;
-let count = 0;
-var S = [];
-
 while (i >= 0 && count < DB.length - 1) {
-  console.log("i", i);
-  console.log(ArrayID);
-
   const ID = timkiem(i, ROUTEMAP, S);
-  console.log("iD", ID);
   ROUTEMAP.push(ID);
   count++;
-  console.log(ROUTEMAP);
   i = ID;
-  console.log("i+1", i);
+
+  if (count === DB.length - 1) {
+    S.push(DB.map((x) => x[ID])[0]);
+  }
 }
-console.log("Siii", S);
+
 const reducer = (accumulator, currentValue) => accumulator + currentValue;
-console.log(S.reduce(reducer));
+console.log(`[${ROUTEMAP}] => ${S.reduce(reducer)}`);
