@@ -11,8 +11,8 @@ let sum = 0;
 try {
   let orders = JSON.parse(fs.readFileSync("../DB/db.json"));
   orders.forEach((e, i) => {
-    console.log(i, e.order.weight);
-    sum += e.order.weight;
+    console.log(i, e.distances);
+    // sum += e.order.weight;
   });
 } catch (err) {
   console.log(err);

@@ -1,11 +1,12 @@
 const fs = require("fs");
 
 let customers, orders;
-let indexRouteMap = [];
+let indexRoute = [];
 let routeMap = [];
 let routeWeight = [];
 let sumRouteWeight = [];
 let bestRouter = 0;
+let locationRoute = [];
 
 /**
  * function read file json
@@ -22,7 +23,7 @@ let bestRouter = 0;
 
 /**
  * @function {} tinh tong quang duong
- * @param {Array} arr indexRouteMap
+ * @param {Array} arr indexRoute
  */
 const funcSumRoute = (arr) => {
   for (let i = 0; i < arr.length - 1; i++) {
@@ -31,81 +32,82 @@ const funcSumRoute = (arr) => {
 };
 
 /**
- *
- * @param {int} id id cua dia diem bat dau (depot)
- * @param {int} capacityVehicle suc chua cua xe hang
+ * @function {} tim diem tiep theo
+ * @param {Array} arrIndex mang indexRoute
  */
-const main = (firstId, capacityVehicle) => {
-  let id = firstId;
-  let chayVongLap = true;
-  let sumCapacity = 0;
+const findNextPoint = (arrIndex) => {
+  let shortestWay = Number.MAX_VALUE;
+  let lastIndex = arrIndex[arrIndex.length - 1];
+  let distances = orders[lastIndex].distances;
+  let nextIndex;
 
-  while (chayVongLap) {
-    let shortestWay = Number.MAX_VALUE;
-    let pointRemain = 0;
-
-    let order = orders.find((e) => e.id === id);
-    const arrDistance = order.distances;
-    const weightOrder = order.order.weight;
-
-    if (capacityVehicle) {
-      sumCapacity += weightOrder;
-      if (sumCapacity > capacityVehicle) {
-        routeWeight.push(indexRouteMap[0]);
-        id = firstId;
-        sumCapacity = 0;
-        order = orders.find((e) => e.id === id);
-      } else {
-        routeWeight.push(weightOrder);
-      }
+  distances.forEach((e, index) => {
+    if (arrIndex.indexOf(index) < 0 && e < shortestWay) {
+      shortestWay = e;
+      nextIndex = index;
     }
+  });
 
-    indexRouteMap.push(orders.indexOf(order));
-
-    arrDistance.forEach((e, index) => {
-      if (indexRouteMap.indexOf(index) < 0) {
-        pointRemain++;
-        if (e < shortestWay) {
-          id = orders[index].id;
-          shortestWay = e;
-        }
-      }
-    });
-
-    chayVongLap = pointRemain > 0 ? true : false;
-
-    // if (shortestWay !== Number.MAX_VALUE) bestRouter += shortestWay;
-  }
-
-  //Update diem cuoi cung cua indexRouteMap array
-  const firstIndexRoute = indexRouteMap[0];
-  indexRouteMap.push(firstIndexRoute);
-
-  //Update id cuoi cung cua routeMap array
-  indexRouteMap.forEach((e) => routeMap.push(orders[e].id));
-
-  //Update diem cuoi cung cua routeWeight array
-  if (capacityVehicle) {
-    routeWeight.push(firstIndexRoute);
-  }
-
-  //Tinh tong trong luong cho tung chuyen va get ket qua vao sumRouteWeight array
-  sumCapacity = 0;
-  for (let i = 1; i < routeWeight.length; i++) {
-    if (routeWeight[i] === 0) {
-      sumRouteWeight.push(sumCapacity);
-      sumCapacity = 0;
-    } else sumCapacity += routeWeight[i];
-  }
-
-  //Tong quang duong di duoc
-  funcSumRoute(indexRouteMap);
+  return nextIndex;
 };
 
-main(142205);
+/**
+ *
+ * @param {Array} arr mang indexRoute
+ */
+const funcGetLocation = (arr) => {
+  arr.forEach((e) => {
+    const long = orders[e].order.long;
+    const lat = orders[e].order.lat;
+    locationRoute.push({ long: long, lat: lat });
+  });
+};
 
-console.log("index routing: ", indexRouteMap);
+/**
+ *
+ * @param {int} id id cua dia diem bat dau (depot)
+ * @param {int} capacity suc chua cua xe hang
+ */
+const funcIndexRoute = (firstId, capacity) => {
+  let runWhile = true;
+  let firstIndex = orders.findIndex((e) => e.id === firstId);
+  indexRoute.push(firstIndex);
+  let cargoVolume = 0;
+
+  while (runWhile) {
+    const nextIndex = findNextPoint(indexRoute);
+    if (nextIndex) {
+      if (capacity) {
+        const orderWeight = orders[nextIndex].order.weight;
+        cargoVolume += orderWeight;
+        if (cargoVolume <= capacity) {
+          routeWeight.push(orderWeight);
+          indexRoute.push(nextIndex);
+        } else {
+          routeWeight.push(0);
+          indexRoute.push(firstIndex);
+          cargoVolume = 0;
+        }
+      } else {
+        indexRoute.push(nextIndex);
+      }
+    } else {
+      if (capacity) {
+        routeWeight = [0, ...routeWeight, 0];
+      }
+      runWhile = false;
+    }
+  }
+  indexRoute.push(indexRoute[0]);
+  funcSumRoute(indexRoute);
+};
+
+funcIndexRoute(142205, 30);
+funcGetLocation(indexRoute);
+
+console.log("index routing: ", indexRoute);
 console.log("routing: ", routeMap);
+console.log("location:", locationRoute);
 console.log("route weight: ", routeWeight);
 console.log("sum router weight: ", sumRouteWeight);
 console.log("ditance: ", bestRouter);
