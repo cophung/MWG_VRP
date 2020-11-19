@@ -43,7 +43,7 @@ const funcGetLocation = (arr) => {
   arr.forEach((e) => {
     const long = orders[e].order.long;
     const lat = orders[e].order.lat;
-    routeLocation.push(`${long} ${lat}`);
+    routeLocation.push([long, lat]);
   });
   return routeLocation;
 };
