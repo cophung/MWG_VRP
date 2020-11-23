@@ -48,10 +48,11 @@ const funcGetLocation = (arr) => {
   return routeLocation;
 };
 
-const funcIndexRoute = (firstId, capacity, time) => {
+const funcIndexRoute = (firstId, capacity, time, timeService = 1) => {
   let routeIndex = [];
   let runWhile = true;
   let cargoVolume = 0;
+  let totalTimeTravel = 0;
 
   let firstIndex = orders.findIndex((e) => e.id === firstId);
   routeIndex.push(firstIndex);
@@ -61,15 +62,30 @@ const funcIndexRoute = (firstId, capacity, time) => {
 
     if (nextIndex) {
       function funcHandleConditions() {
-        if (capacity) {
-          const orderWeight = orders[nextIndex].order.weight;
-          cargoVolume += orderWeight;
+        if (time) {
+          const timeTravle =
+            orders[nextIndex].timetravels[routeIndex[routeIndex.length - 1]];
 
-          if (cargoVolume > capacity) {
+          totalTimeTravel += timeTravle + timeService;
+
+          if (totalTimeTravel > time) {
             nextIndex = firstIndex;
+            totalTimeTravel = 0;
             cargoVolume = 0;
           }
+
+          if (capacity) {
+            const orderWeight = orders[nextIndex].order.weight;
+            cargoVolume += orderWeight;
+
+            if (cargoVolume > capacity) {
+              nextIndex = firstIndex;
+              totalTimeTravel = 0;
+              cargoVolume = 0;
+            }
+          }
         }
+
         routeIndex.push(nextIndex);
       }
       funcHandleConditions();
@@ -84,15 +100,15 @@ const funcIndexRoute = (firstId, capacity, time) => {
 };
 
 const main = () => {
-  const routeIndex = funcIndexRoute(142205, 0);
+  const routeIndex = funcIndexRoute(142205, 30, 5);
   console.log("index routing: ", routeIndex);
   console.log("location:", funcGetLocation(routeIndex));
   console.log("total route: ", calTotalRoute(routeIndex));
 
-  const routeIndex1 = funcIndexRoute(142205, 30);
-  console.log("index routing 1: ", routeIndex1);
-  console.log("location 1:", funcGetLocation(routeIndex1));
-  console.log("total route 1: ", calTotalRoute(routeIndex1));
+  // const routeIndex1 = funcIndexRoute(142205, 30);
+  // console.log("index routing 1: ", routeIndex1);
+  // console.log("location 1:", funcGetLocation(routeIndex1));
+  // console.log("total route 1: ", calTotalRoute(routeIndex1));
 };
 
 main();
