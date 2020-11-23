@@ -73,16 +73,16 @@ const funcIndexRoute = (firstId, capacity, time, timeService = 1) => {
             totalTimeTravel = 0;
             cargoVolume = 0;
           }
+        }
 
-          if (capacity) {
-            const orderWeight = orders[nextIndex].order.weight;
-            cargoVolume += orderWeight;
+        if (capacity) {
+          const orderWeight = orders[nextIndex].order.weight;
+          cargoVolume += orderWeight;
 
-            if (cargoVolume > capacity) {
-              nextIndex = firstIndex;
-              totalTimeTravel = 0;
-              cargoVolume = 0;
-            }
+          if (cargoVolume > capacity) {
+            nextIndex = firstIndex;
+            totalTimeTravel = 0;
+            cargoVolume = 0;
           }
         }
 
