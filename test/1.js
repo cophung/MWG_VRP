@@ -598,11 +598,56 @@ require([
 
   const getRandomRGB = () => (Math.random() * 256) >> 0;
 
+  const addPointDepotOnLayer = () => {
+    const serviceTimeDepot = dbOrder[0].order.timeWindow;
+    const pointAtt = {
+      Name: "Kho",
+      ServiceTime: `${serviceTimeDepot[0]}h - ${serviceTimeDepot[1]}h`,
+    };
+    const stop = new Graphic({
+      geometry: {
+        type: "point", // autocasts as new Point()
+        longitude: dbOrder[0].order.long,
+        latitude: dbOrder[0].order.lat,
+      },
+      symbol: {
+        type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+        style: "circle",
+        color: "yellow",
+        size: 8,
+        outline: {
+          // autocasts as new SimpleLineSymbol()
+          color: "blue",
+          width: 3,
+        },
+      },
+      attributes: pointAtt,
+      popupTemplate: {
+        // autocasts as new PopupTemplate()
+        title: "{Name}",
+        content: [
+          {
+            type: "fields",
+            fieldInfos: [
+              {
+                fieldName: "ServiceTime",
+                label: "Thời gian phục vụ",
+              },
+            ],
+          },
+        ],
+      },
+    });
+    routeLayer.add(stop);
+  };
+  addPointDepotOnLayer();
+
   for (let i = 0; i < routes.length; i++) {
     const itemRoutes = routes[i];
     const colorLocation = [getRandomRGB(), getRandomRGB(), getRandomRGB()];
     const colorRoute = [...colorLocation, 0.3];
-    let temporaryRoute = [];
+    let temporaryRouteLayer = [];
+    let temporaryRouteParams = [];
     // Setup the route parameters
     let routeParams = new RouteParameters({
       stops: new FeatureSet(),
@@ -669,10 +714,14 @@ require([
           ],
         },
       });
-      temporaryRoute.push(stop);
+      if (index !== 0) {
+        temporaryRouteLayer.push(stop);
+      }
+      temporaryRouteParams.push(stop);
     }
-    routeLayer.addMany(temporaryRoute);
-    routeParams.stops.features.push(...temporaryRoute);
+
+    routeLayer.addMany(temporaryRouteLayer);
+    routeParams.stops.features.push(...temporaryRouteParams);
     routeTask.solve(routeParams).then((data) => {
       let routeResult = data.routeResults[0].route;
       routeResult.symbol = {
