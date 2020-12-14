@@ -20,7 +20,7 @@
             "weight": 7,
             "long": 106.77441,
             "lat": 10.841086,
-            "ServiceTime": 0.7,
+            "ServiceTime": 0.70,
             "timeWindow":[8,13]
         }
     },
@@ -32,7 +32,7 @@
             "weight": 3,
             "long": 106.773538,
             "lat": 10.844492,
-            "ServiceTime": 0.2,
+            "ServiceTime": 0.20,
             "timeWindow":[9,11]
         }
     },
@@ -176,7 +176,7 @@
             "weight": 2,
       "long": 106.773386,
       "lat": 10.860449,
-      "ServiceTime": 0.2,
+      "ServiceTime": 0.20,
       "timeWindow":[8,16]
         }
     },

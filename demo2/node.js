@@ -1,6 +1,10 @@
 const fs = require("fs");
 let customers, orders;
-
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
+}
 (function () {
   try {
     // customers = JSON.parse(fs.readFileSync("../DB/id.json"));
@@ -87,6 +91,7 @@ const funcIndexRoute = (firstId, capacity, time, orders1,arrorder) => {
   let totalTimeTravel = 0;
   let TimeTravel = [];
   let arrayTempt = [];
+  console.log("orders1[0].order.timeWindow",orders1[0] )
   let arraytime = orders1[0].order.timeWindow;
 
   let firstIndex = orders1.findIndex((e) => e.id === firstId);
@@ -262,18 +267,6 @@ let E = 0;
   return routelenghtIndexMin;
 };
 
-// const Array= (arr,order) => {
-//   let ordernew =[];
-//   arr.forEach((e, index) => {
-//       ordernew.push(order[e]);
-//     });
-
-//   return ordernew;
-// };
-
-
-
-
 const findOrderRoute = (arr, order) => {
   let ordernew = [];
   arr.forEach((e, index) => {
@@ -302,7 +295,6 @@ const TinhTime = (arr, orders1) => {
       Math.round((orders1[i].order["ServiceTime"]) * 100) / 100;
     let indexATimewindows = Math.round((orders1[i].order["timeWindow"][0] + timeService) * 100) / 100;
 
-    // console.log("indexATimewindows",indexATimewindows);
     let indexBTimewindows =
       Math.round((orders1[i].order["timeWindow"][1] + timeService) * 100) / 100;
     ;
@@ -350,55 +342,53 @@ const main = (orders) => {
   // console.log("location:", funcGetLocation(roucleteIndex));
   // console.log("total route: ", calTotalRoute(routeIndex));
   let Routific = getRoutific(routeIndex);
-  let RoutificDemo = Routific;
+  let RoutificDemo = Routific.slice();
   let RouteTrue = true;
   let b = 4;
   let c = 0;
+  let ArrayRemoved = [];
+  for (let i = 0; i < RoutificDemo.length; i++) {
+    RoutificDemo[i].pop();
+  }
+  // for(let Ramdom = 0;Ramdom<320; i++){}
   while (RouteTrue){ 
     console.log("lan 1 nhe: ", c+1);
-    let ArrayRemoved = [];
-    console.log("RoutificRoutific", RoutificDemo)
+    // console.log("RoutificRoutific", RoutificDemo)
     let arraycalTotalRoute = RoutificDemo.map(x => calTotalRoute(x));
     let z = RoutificDemo.map(x => x.length);
     console.log("z",z);
     let MinRoute = findMinRoute(z);
-    console.log("MinRouteMinRouteMinRouteMinRouteMinRoute",MinRoute)
+    // console.log("MinRouteMinRouteMinRouteMinRouteMinRoute",MinRoute)
     let IndexMinRouter = findIndexRoute(z, MinRoute, arraycalTotalRoute,1);
-    console.log("IndexMinRouter",IndexMinRouter);
+    // console.log("IndexMinRouter",IndexMinRouter);
     let Route = RoutificDemo[IndexMinRouter];
     RoutificDemo = RoutificDemo.filter((item, index) => index !== IndexMinRouter);
     // console.log("Route",Route);
+    let FFF =JSON.parse(JSON.stringify(RoutificDemo));
     let Route2 = Route.filter((item, index) => Route.indexOf(item) !== 0);
     // console.log("Route222222222222222222",Route2);
     ArrayRemoved.push(...Route2);
+    console.log("ArrayRemovedArrayRemovedArrayRemovedArrayRemovedArrayRemoved",ArrayRemoved);
     let Removed =ArrayRemoved.slice();
     // Removed.push(Routific[IndexMinRouter]);
     // console.log(Routific,"Routific");
-    for (let i = 0; i < RoutificDemo.length; i++) {
-      RoutificDemo[i].pop();
-    }
- 
 
-
-    console.log("Dsadadaddadad");
+    
+    
+    console.log("Dsadadaddadad",FFF);
     while(0 < Removed.length){
- 
+      FFF = JSON.parse(JSON.stringify(RoutificDemo));
       let b = Removed[Removed.length-1];
       console.log("bvvvv",b)
       console.log("RoutificRoutific", RoutificDemo)
       for (let i = 0; i < RoutificDemo.length; i++) {
         RoutificDemo[i].push(b);
-        // Routific[i].push(4);
       }
       for (let i = 0; i < RoutificDemo.length; i++) {
         RoutificDemo[i].sort(function(a, b) {
           return a - b;
         });
       }
-
-      console.log("RoutificDemo", RoutificDemo)
-      // const bo=findOrderRoute([1,2,3,4],orders1);
-      // console.log("findOrderRoute",bo)
       let InsertRoute = [];
       for (let i = 0; i < RoutificDemo.length; i++) {
     
@@ -415,50 +405,162 @@ const main = (orders) => {
         
         let routeIndex22 = insertroute.map((x,index)=>RoutificDemo[i][x]);
 
-        // console.log("routeIndex22",routeIndex22);
+        console.log("routeIndex22",routeIndex22);
         arrInsert.push(routeIndex22);
         
     
       }
-      console.log("InsertRoute", arrInsert);
-      // console.log("RemoRoutificDemoRemovedved",RoutificDemoRemoved);
+      // console.log("InsertRoute", arrInsert);
+
+      // console.log("Removed",Removed);
+      Removed.pop();
+      RoutificDemo = JSON.parse(JSON.stringify(FFF));
+      // console.log("Removed",Removed);
+      // console.log("RoutificDemo",RoutificDemo);
+      // console.log("fffff",FFF);
+
       for (let i = 0; i < arrInsert.length; i++) {
         const X = getRoutific(arrInsert[i]);
 
 
         if(X.length === 1 ){
-            console.log("hihiooooooooooooooooo");
-          // RoutificDemo = [...RoutificDemo[i],X,...RoutificDemo[RoutificDemo.length-1]];
-          // Removed = ArrayRemoved.slice().filter(x=>x !== b);
-          break;
+           
+            let Tempt = JSON.parse(JSON.stringify(FFF));
+            // console.log("XXXXXXX",X);
+            console.log("TemptTemptTemptTemptTemptTemptTemptTemptTemptTempt",Tempt);
+            X[0].pop()
+            Tempt[i]= X[0];
+            console.log("TemptTemptTemptTemptTemptTemptTemptTemptTemptTempt",Tempt)
+            RoutificDemo =  JSON.parse(JSON.stringify(Tempt));
+            ArrayRemoved = ArrayRemoved.slice().filter(x=>x !== b);
+            // c = 0;
+            console.log("RemovedRemovedRemovedRemoved",Removed);
+            break;
         }
-       
-
+        console.log("Removed",Removed);
       }
-      console.log("Removed",Removed);
-      Removed.pop();
-
-      // RoutificDemo = RoutificDemoRemoved;
-      // console.log("RemoRoutificDemoRemovedved",RoutificDemoRemoved);
-      console.log("Removed",Removed);
-      console.log("RoutificDemo",RoutificDemo);
-  
     }
-    console.log("Removeddasdsad",Removed);
-    // c++;
-    // if(c===4){
-    //   RouteTrue = false;
-    //    console.log("hihihihihihihihihi");
-    // }
-        RouteTrue = false;
+    c++;
+    if(c===4){
+      //  RouteTrue = false;
+       console.log("RoutificDemo",RoutificDemo);
+       RouteTrue = false;
+    }
+    console.log("RoutificDemoRoutificDemoRoutificDemoRoutificDemoRoutificDemo",RoutificDemo);
+    
     // let arraycal = arrInsert.map(x => calTotalRoute(x));
     // console.log(arraycalTotalRoute);
     // console.log("arraycal",arraycal);
-   
   }
- 
+    
+  for (let i = 0; i < RoutificDemo.length; i++) {
 
- 
+    console.log("RoutificDemo[i][RoutificDemo[i].length-1].order",orders1[RoutificDemo[i][RoutificDemo[i].length-1]].order.timeWindow)
+    orders1[RoutificDemo[i][RoutificDemo[i].length-1]].order.timeWindow[0] = + 0.5;
+    orders1[RoutificDemo[i][RoutificDemo[i].length-1]].order.timeWindow[1] = + 0.5;
+    // Routific[i].push(4);
+  }
+  Removed = ArrayRemoved.slice();
+  while(0 < Removed.length){
+    FFF = JSON.parse(JSON.stringify(RoutificDemo));
+    let b = Removed[Removed.length-1];
+    console.log("bvvvv",b)
+    console.log("RoutificRoutific", RoutificDemo)
+    for (let i = 0; i < RoutificDemo.length; i++) {
+      RoutificDemo[i].push(b);
+    }
+    for (let i = 0; i < RoutificDemo.length; i++) {
+      RoutificDemo[i].sort(function(a, b) {
+        return a - b;
+      });
+    }
+    let InsertRoute = [];
+    for (let i = 0; i < RoutificDemo.length; i++) {
+  
+      const findOrder = findOrderRoute(RoutificDemo[i], orders1);
+      InsertRoute.push(findOrder);
+  
+    }
+    // console.log("InsertRoute", InsertRoute);
+    let arrInsert = [];
+    for (let i = 0; i < RoutificDemo.length; i++) {
+      // let arrInsert = [];
+      console.log("lan i", i,RoutificDemo[i]);
+      const insertroute = funcIndexRoute(142205, 30, 5, InsertRoute[i], RoutificDemo[i]);
+      
+      let routeIndex22 = insertroute.map((x,index)=>RoutificDemo[i][x]);
+
+      console.log("routeIndex22",routeIndex22);
+      arrInsert.push(routeIndex22);
+      
+  
+    }
+    // console.log("InsertRoute", arrInsert);
+
+    // console.log("Removed",Removed);
+    Removed.pop();
+    RoutificDemo = JSON.parse(JSON.stringify(FFF));
+    // console.log("Removed",Removed);
+    // console.log("RoutificDemo",RoutificDemo);
+    // console.log("fffff",FFF);
+
+    for (let i = 0; i < arrInsert.length; i++) {
+      const X = getRoutific(arrInsert[i]);
+
+
+      if(X.length === 1 ){
+         
+          let Tempt = JSON.parse(JSON.stringify(FFF));
+          // console.log("XXXXXXX",X);
+          console.log("TemptTemptTemptTemptTemptTemptTemptTemptTemptTempt",Tempt);
+          X[0].pop()
+          Tempt[i]= X[0];
+          console.log("TemptTemptTemptTemptTemptTemptTemptTemptTemptTempt",Tempt)
+          RoutificDemo =  JSON.parse(JSON.stringify(Tempt));
+          ArrayRemoved = ArrayRemoved.slice().filter(x=>x !== b);
+          // c = 0;
+          console.log("RemovedRemovedRemovedRemoved",Removed);
+          break;
+      }
+      console.log("Removed",Removed);
+    }
+  }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  ArrayRemoved.push(0);
+    ArrayRemoved.sort(function(a, b) {
+      return a - b;
+    });
+
+   console.log("ArrayRemoved",ArrayRemoved)
+    // let InsertRoute = [];
+    const findOrder = findOrderRoute(ArrayRemoved, orders1);
+    // InsertRoute.push(findOrder);
+    // console.log("InsertRoute",InsertRoute)
+
+    const insertroute = funcIndexRoute(142205, 30, 5, findOrder, ArrayRemoved);
+    console.log("insertroute",insertroute)
+
+    let insertrouterest = insertroute.map((x,index)=>ArrayRemoved[x]);
+
+    console.log("insertrouterest",insertrouterest)
+    
+
 
 
 
