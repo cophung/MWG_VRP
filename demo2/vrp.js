@@ -519,6 +519,9 @@ const main = (orders) => {
 
          RouteTrue = false;
       }
+      let calrouteRouteExiting = CalrouteRouteExiting(RoutificDemo,ArrayRemoved);
+
+      console.log("calrouteRouteExiting",calrouteRouteExiting);
       // console.log(ArrayRemoved,"ArrayRemovedArrayRemovedArrayRemovedArrayRemoved");
       // let arrRoute = RoutificDemo.concat([ArrayRemoved]);
       // let RouteFinish =  [];
